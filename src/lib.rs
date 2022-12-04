@@ -1,4 +1,3 @@
-use uuid::Uuid;
 use clap::{Arg, Command, ArgAction, ArgMatches};
 use serde::{Serialize, Deserialize};
 
@@ -120,8 +119,6 @@ pub struct RequestBuilder {
   until: Option<u32>,
   #[serde(skip_serializing_if = "Option::is_none")]
   limit: Option<u32>,
-  #[serde(skip_serializing)]
-  pub subscription_id: String
 }
 
 impl RequestBuilder {
@@ -136,7 +133,6 @@ impl RequestBuilder {
             since: None,
             until: None,
             limit: None,
-            subscription_id: "".to_string()
         }
   }
 
@@ -200,11 +196,6 @@ impl RequestBuilder {
       self
   }
 
-  pub fn subscription_id(&mut self, subid: String) -> &mut Self {
-    self.subscription_id = subid;
-    self
-  }
-
   pub fn to_json(&mut self) -> String {
     serde_json::to_string(self).unwrap()
   }
@@ -258,11 +249,6 @@ pub fn request_from_cli(cli_matches: ArgMatches) -> RequestBuilder {
       None => {},
       Some(limit) => { request.limit(*limit); }
     }
-
-    match cli_matches.get_one::<String>("subscription-id") {
-      None => { request.subscription_id(Uuid::new_v4().to_string()) },
-      Some(id) => { request.subscription_id(id.to_string()) }
-    };
 
     request
 }

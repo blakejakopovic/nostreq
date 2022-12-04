@@ -19,6 +19,12 @@ $ nostreq --authors pubkey1,pubkey2,pubkey3
 ["REQ", "2e3479cd-e04d-4e4d-a370-a7c77cf7998e", {"authors":["pubkey1","pubkey2","pubkey3"]}]
 ```
 
+Generate a relay request with multiple filters (OR)
+```shell
+$ nostreq --authors pubkey1 --limit 1 --or --etags pubkey1
+["REQ", "dede0573-ffb4-45e7-a2e7-346178426762", {"authors":["pubkey1"],"limit":1},{"#e":["pubkey1"]}]
+```
+
 Generate a relay request a custom subscription id
 ```shell
 $ nostreq --subscription-id myspecialsub
