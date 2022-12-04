@@ -9,6 +9,7 @@ fn main() {
     // Support for --or as an OR filter input separator
     let or_list: Vec<Vec<String>> = args[1..].into_iter().fold(Vec::new(), |mut acc, x| {
         if x == "--or" || acc.is_empty() {
+            // clap expects the program name in index 0, so we must add it to each OR arg set
             acc.push(vec![String::from(args[0].to_string())]);
         }
         if x != "--or" {
@@ -17,7 +18,7 @@ fn main() {
         acc
     });
 
-    // Process each OR filter
+    // Process each OR argument set
     let mut filter: Vec<String> = vec![];
     for or in &or_list {
 
