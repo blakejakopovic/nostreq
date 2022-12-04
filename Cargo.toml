@@ -1,9 +1,12 @@
 [package]
 name = "nostreq"
+description = "Nostr relay event request generator"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+repository = "https://github.com/blakejakopovic/nostreq"
+license-file = "LICENSE.txt"
+readme = "README.md"
+keywords = ["nostr", "nostr-protocol", "json", "cli"]
 
 [dependencies]
 serde = { version = "1.0.148", features = ["derive"] }

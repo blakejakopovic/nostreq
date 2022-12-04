@@ -4,8 +4,8 @@ use serde::{Serialize, Deserialize};
 
 pub fn cli() -> Command {
     Command::new("nostreq")
-        .about("Nostr commandline request builder")
-        .version("0.0.1")
+        .about("Nostr relay event request generator")
+        .version("0.1.0")
         .author("Blake Jakopovic")
         .arg(
             Arg::new("subscription-id")
