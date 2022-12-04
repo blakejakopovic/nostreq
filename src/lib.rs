@@ -212,47 +212,38 @@ impl RequestBuilder {
 }
 
 pub fn request_from_cli(cli_matches: ArgMatches) -> RequestBuilder {
+
     let mut request = RequestBuilder::new();
 
-    let _ = cli_matches
+    for id in cli_matches
         .get_many::<String>("ids")
-        .unwrap_or_default()
-        .map(|id| {
-             request.id(id.to_string());
-        })
-        .collect::<Vec<_>>();
+        .unwrap_or_default() {
+            request.id(id.to_string());
+        }
 
-    let _ = cli_matches
+    for author in cli_matches
         .get_many::<String>("authors")
-        .unwrap_or_default()
-        .map(|author| {
+        .unwrap_or_default() {
              request.author(author.to_string());
-        })
-        .collect::<Vec<_>>();
+        }
 
-    let _ = cli_matches
+    for kind in cli_matches
         .get_many::<u32>("kinds")
-        .unwrap_or_default()
-        .map(|kind| {
+        .unwrap_or_default() {
              request.kind(*kind);
-        })
-        .collect::<Vec<_>>();
+        };
 
-    let _ = cli_matches
+    for etag in cli_matches
         .get_many::<String>("etags")
-        .unwrap_or_default()
-        .map(|etag| {
+        .unwrap_or_default() {
              request.etag(etag.to_string());
-        })
-        .collect::<Vec<_>>();
+        }
 
-    let _ = cli_matches
+    for ptag in cli_matches
         .get_many::<String>("ptags")
-        .unwrap_or_default()
-        .map(|ptag| {
+        .unwrap_or_default() {
              request.ptag(ptag.to_string());
-        })
-        .collect::<Vec<_>>();
+        }
 
     match cli_matches.get_one::<u32>("since") {
       None => {},
