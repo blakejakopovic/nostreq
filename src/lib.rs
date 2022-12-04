@@ -7,7 +7,6 @@ pub fn cli() -> Command {
         .about("Nostr commandline request builder")
         .version("0.0.1")
         .author("Blake Jakopovic")
-        .arg_required_else_help(true)
         .arg(
             Arg::new("subscription-id")
                 .help("custom request subscription id")
