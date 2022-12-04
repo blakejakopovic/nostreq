@@ -2,6 +2,18 @@
 
 Nostr relay event request generator
 
+## Getting started
+Using Cargo to install (requires ~/.cargo/bin to be in PATH)
+```shell
+$ cargo install nostreq
+```
+
+Building from source (may be unstable)
+```shell
+$ git clone https://github.com/blakejakopovic/nostreq
+$ cargo build --release
+$ ./target/release/nostreq
+```
 
 ## Examples
 
