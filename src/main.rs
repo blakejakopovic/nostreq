@@ -27,7 +27,11 @@ fn main() {
       let mut request = request_from_cli(cli_matches);
 
       let request_json = request.to_json();
-      filter.push(request_json);
+
+      // Only append if the json request is not empty
+      if request_json != "{}" {
+        filter.push(request_json)
+      }
     }
 
     // Set default value for filter if it's empty
