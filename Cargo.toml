@@ -1,7 +1,7 @@
 [package]
 name = "nostreq"
 description = "Nostr relay event request generator"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 repository = "https://github.com/blakejakopovic/nostreq"
 license-file = "LICENSE.txt"

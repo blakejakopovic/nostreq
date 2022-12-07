@@ -4,7 +4,7 @@ use serde::{Serialize, Deserialize};
 pub fn cli() -> Command {
     Command::new("nostreq")
         .about("Nostr relay event request generator")
-        .version("0.1.1")
+        .version("0.1.2")
         .author("Blake Jakopovic")
         .arg(
             Arg::new("subscription-id")
