@@ -100,7 +100,7 @@ pub fn cli() -> Command {
 // }
 
 #[derive(Serialize, Deserialize)]
-pub struct RequestBuilder {
+pub struct Request {
   #[serde(skip_serializing_if = "Option::is_none")]
   ids: Option<Vec<String>>,
   #[serde(skip_serializing_if = "Option::is_none")]
@@ -121,10 +121,10 @@ pub struct RequestBuilder {
   limit: Option<u32>,
 }
 
-impl RequestBuilder {
+impl Request {
 
-  pub fn new() -> RequestBuilder {
-        RequestBuilder {
+  pub fn new() -> Self {
+        Self {
             ids: None,
             authors: None,
             kinds: None,
@@ -201,39 +201,23 @@ impl RequestBuilder {
   }
 }
 
-pub fn request_from_cli(cli_matches: ArgMatches) -> RequestBuilder {
-
-    let mut request = RequestBuilder::new();
-
-    for id in cli_matches
-        .get_many::<String>("ids")
-        .unwrap_or_default() {
-            request.id(id.to_string());
+macro_rules! add_parameters_to_request {
+    ($request:ident, $cli_matches:expr, $param_name:expr, $fn_name:ident, $param_type:ty) => {
+        for param in $cli_matches.get_many::<$param_type>($param_name).unwrap_or_default() {
+            $request.$fn_name(param.to_owned());
         }
+    }
+}
 
-    for author in cli_matches
-        .get_many::<String>("authors")
-        .unwrap_or_default() {
-             request.author(author.to_string());
-        }
+pub fn request_from_cli(cli_matches: ArgMatches) -> Request {
 
-    for kind in cli_matches
-        .get_many::<u32>("kinds")
-        .unwrap_or_default() {
-             request.kind(*kind);
-        };
+    let mut request = Request::new();
 
-    for etag in cli_matches
-        .get_many::<String>("etags")
-        .unwrap_or_default() {
-             request.etag(etag.to_string());
-        }
-
-    for ptag in cli_matches
-        .get_many::<String>("ptags")
-        .unwrap_or_default() {
-             request.ptag(ptag.to_string());
-        }
+    add_parameters_to_request!(request, cli_matches, "ids", id, String);
+    add_parameters_to_request!(request, cli_matches, "authors", author, String);
+    add_parameters_to_request!(request, cli_matches, "kinds", kind, u32);
+    add_parameters_to_request!(request, cli_matches, "etags", etag, String);
+    add_parameters_to_request!(request, cli_matches, "ptags", ptag, String);
 
     match cli_matches.get_one::<u32>("since") {
       None => {},

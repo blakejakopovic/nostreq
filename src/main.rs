@@ -30,11 +30,22 @@ fn main() {
       filter.push(request_json);
     }
 
-    let cli_matches = cli().get_matches_from(&or_list[0]);
-    let subscription_id = match cli_matches.get_one::<String>("subscription-id") {
-      None => { Uuid::new_v4().to_string() },
-      Some(id) => { id.to_string() }
+    // Set default value for filter if it's empty
+    if filter.is_empty() {
+        filter = vec!["{}".to_string()];
+    }
+
+    // Generate subscription id, if not provided
+    let subscription_id = match or_list.first() {
+        Some(args) => {
+          let cli_matches = cli().get_matches_from(args);
+          match cli_matches.get_one::<String>("subscription-id") {
+            None => { Uuid::new_v4().to_string() },
+            Some(m) => m.to_string()
+          }
+        },
+        None => { Uuid::new_v4().to_string() }
     };
 
-    println!(r#"["REQ", "{}", {}]"#, subscription_id, filter.join(","));
+    println!(r#"["REQ","{}",{}]"#, subscription_id, filter.join(","));
 }
