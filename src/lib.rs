@@ -209,6 +209,15 @@ macro_rules! add_parameters_to_request {
     }
 }
 
+macro_rules! add_parameter_to_request {
+  ($request:ident, $matches:ident, $param_name:expr, $fn_name:ident, $param_type:ty) => {
+    match $matches.get_one::<$param_type>($param_name) {
+      None => {},
+      Some(param) => { $request.$fn_name(*param); }
+    }
+  }
+}
+
 pub fn request_from_cli(cli_matches: ArgMatches) -> Request {
 
     let mut request = Request::new();
@@ -219,20 +228,9 @@ pub fn request_from_cli(cli_matches: ArgMatches) -> Request {
     add_parameters_to_request!(request, cli_matches, "etags", etag, String);
     add_parameters_to_request!(request, cli_matches, "ptags", ptag, String);
 
-    match cli_matches.get_one::<u32>("since") {
-      None => {},
-      Some(since) => { request.since(*since); }
-    }
-
-    match cli_matches.get_one::<u32>("until") {
-      None => {},
-      Some(until) => { request.until(*until); }
-    }
-
-    match cli_matches.get_one::<u32>("limit") {
-      None => {},
-      Some(limit) => { request.limit(*limit); }
-    }
+    add_parameter_to_request!(request, cli_matches, "since", since, u32);
+    add_parameter_to_request!(request, cli_matches, "until", until, u32);
+    add_parameter_to_request!(request, cli_matches, "limit", limit, u32);
 
     request
 }
