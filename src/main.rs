@@ -49,5 +49,16 @@ fn main() {
         None => Uuid::new_v4().to_string(),
     };
 
-    println!(r#"["REQ","{}",{}]"#, subscription_id, filter.join(","));
+    let method = if cli().get_matches_from(args).get_flag("count") {
+        "COUNT"
+    } else {
+        "REQ"
+    };
+
+    println!(
+        r#"["{}","{}",{}]"#,
+        method,
+        subscription_id,
+        filter.join(",")
+    );
 }

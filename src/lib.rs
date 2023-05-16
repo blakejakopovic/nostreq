@@ -84,6 +84,14 @@ pub fn cli() -> Command {
                 .num_args(1)
                 .value_parser(clap::value_parser!(u32)),
         )
+        .arg(
+            Arg::new("count")
+                .help("maximum number of events to be returned in the initial query")
+                .long("count")
+                .required(false)
+                .num_args(0)
+                .value_parser(clap::value_parser!(bool)),
+        )
 }
 
 // Reference from NIP-01 Documentation
