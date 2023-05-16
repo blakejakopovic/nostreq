@@ -3,7 +3,6 @@ use std::env;
 use uuid::Uuid;
 
 fn main() {
-
     let args: Vec<String> = env::args().collect();
 
     // Support for --or as an OR filter input separator
@@ -21,17 +20,16 @@ fn main() {
     // Process each OR argument set
     let mut filter: Vec<String> = vec![];
     for or in &or_list {
+        let cli_matches = cli().get_matches_from(or);
 
-      let cli_matches = cli().get_matches_from(or);
+        let mut request = request_from_cli(cli_matches);
 
-      let mut request = request_from_cli(cli_matches);
+        let request_json = request.to_json();
 
-      let request_json = request.to_json();
-
-      // Only append if the json request is not empty
-      if request_json != "{}" {
-        filter.push(request_json)
-      }
+        // Only append if the json request is not empty
+        if request_json != "{}" {
+            filter.push(request_json)
+        }
     }
 
     // Set default value for filter if it's empty
@@ -42,13 +40,13 @@ fn main() {
     // Generate subscription id, if not provided
     let subscription_id = match or_list.first() {
         Some(args) => {
-          let cli_matches = cli().get_matches_from(args);
-          match cli_matches.get_one::<String>("subscription-id") {
-            None => { Uuid::new_v4().to_string() },
-            Some(m) => m.to_string()
-          }
-        },
-        None => { Uuid::new_v4().to_string() }
+            let cli_matches = cli().get_matches_from(args);
+            match cli_matches.get_one::<String>("subscription-id") {
+                None => Uuid::new_v4().to_string(),
+                Some(m) => m.to_string(),
+            }
+        }
+        None => Uuid::new_v4().to_string(),
     };
 
     println!(r#"["REQ","{}",{}]"#, subscription_id, filter.join(","));
