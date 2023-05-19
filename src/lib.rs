@@ -1,5 +1,5 @@
-use clap::{Arg, Command, ArgAction, ArgMatches};
-use serde::{Serialize, Deserialize};
+use clap::{Arg, ArgAction, ArgMatches, Command};
+use serde::{Deserialize, Serialize};
 
 pub fn cli() -> Command {
     Command::new("nostreq")
@@ -12,7 +12,7 @@ pub fn cli() -> Command {
                 .long("subscription-id")
                 .required(false)
                 .num_args(1)
-                .value_parser(clap::value_parser!(String))
+                .value_parser(clap::value_parser!(String)),
         )
         .arg(
             Arg::new("ids")
@@ -21,7 +21,7 @@ pub fn cli() -> Command {
                 .required(false)
                 .num_args(0..)
                 .value_delimiter(',')
-                .value_parser(clap::value_parser!(String))
+                .value_parser(clap::value_parser!(String)),
         )
         .arg(
             Arg::new("authors")
@@ -30,7 +30,7 @@ pub fn cli() -> Command {
                 .required(false)
                 .num_args(0..)
                 .value_delimiter(',')
-                .value_parser(clap::value_parser!(String))
+                .value_parser(clap::value_parser!(String)),
         )
         .arg(
             Arg::new("kinds")
@@ -40,7 +40,7 @@ pub fn cli() -> Command {
                 .num_args(0..)
                 .value_delimiter(',')
                 .action(ArgAction::Append)
-                .value_parser(clap::value_parser!(u32))
+                .value_parser(clap::value_parser!(u32)),
         )
         .arg(
             Arg::new("etags")
@@ -49,7 +49,7 @@ pub fn cli() -> Command {
                 .required(false)
                 .num_args(0..)
                 .value_delimiter(',')
-                .value_parser(clap::value_parser!(String))
+                .value_parser(clap::value_parser!(String)),
         )
         .arg(
             Arg::new("ptags")
@@ -58,7 +58,7 @@ pub fn cli() -> Command {
                 .required(false)
                 .num_args(0..)
                 .value_delimiter(',')
-                .value_parser(clap::value_parser!(String))
+                .value_parser(clap::value_parser!(String)),
         )
         .arg(
             Arg::new("since")
@@ -66,7 +66,7 @@ pub fn cli() -> Command {
                 .long("since")
                 .required(false)
                 .num_args(1)
-                .value_parser(clap::value_parser!(u32))
+                .value_parser(clap::value_parser!(u32)),
         )
         .arg(
             Arg::new("until")
@@ -74,7 +74,7 @@ pub fn cli() -> Command {
                 .long("until")
                 .required(false)
                 .num_args(1)
-                .value_parser(clap::value_parser!(u32))
+                .value_parser(clap::value_parser!(u32)),
         )
         .arg(
             Arg::new("limit")
@@ -82,9 +82,16 @@ pub fn cli() -> Command {
                 .long("limit")
                 .required(false)
                 .num_args(1)
-                .value_parser(clap::value_parser!(u32))
+                .value_parser(clap::value_parser!(u32)),
         )
-
+        .arg(
+            Arg::new("count")
+                .help("use COUNT method to get number of query results (NIP-45)")
+                .long("count")
+                .required(false)
+                .num_args(0)
+                .value_parser(clap::value_parser!(bool)),
+        )
 }
 
 // Reference from NIP-01 Documentation
@@ -101,29 +108,28 @@ pub fn cli() -> Command {
 
 #[derive(Serialize, Deserialize)]
 pub struct Request {
-  #[serde(skip_serializing_if = "Option::is_none")]
-  ids: Option<Vec<String>>,
-  #[serde(skip_serializing_if = "Option::is_none")]
-  authors: Option<Vec<String>>,
-  #[serde(skip_serializing_if = "Option::is_none")]
-  kinds: Option<Vec<u32>>,
-  #[serde(skip_serializing_if = "Option::is_none")]
-  #[serde(rename(serialize = "#e"))]
-  e: Option<Vec<String>>,
-  #[serde(skip_serializing_if = "Option::is_none")]
-  #[serde(rename(serialize = "#p"))]
-  p: Option<Vec<String>>,
-  #[serde(skip_serializing_if = "Option::is_none")]
-  since: Option<u32>,
-  #[serde(skip_serializing_if = "Option::is_none")]
-  until: Option<u32>,
-  #[serde(skip_serializing_if = "Option::is_none")]
-  limit: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    ids: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    authors: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    kinds: Option<Vec<u32>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename(serialize = "#e"))]
+    e: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename(serialize = "#p"))]
+    p: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    since: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    until: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    limit: Option<u32>,
 }
 
 impl Request {
-
-  pub fn new() -> Self {
+    pub fn new() -> Self {
         Self {
             ids: None,
             authors: None,
@@ -134,92 +140,96 @@ impl Request {
             until: None,
             limit: None,
         }
-  }
+    }
 
-  pub fn id(&mut self, id: String) -> &mut Self {
-      self.ids([id].to_vec())
-  }
+    pub fn id(&mut self, id: String) -> &mut Self {
+        self.ids([id].to_vec())
+    }
 
-  pub fn ids(&mut self, mut ids: Vec<String>) -> &mut Self {
-      self.ids.get_or_insert(vec![]).append(&mut ids);
-      self
-  }
+    pub fn ids(&mut self, mut ids: Vec<String>) -> &mut Self {
+        self.ids.get_or_insert(vec![]).append(&mut ids);
+        self
+    }
 
-  pub fn author(&mut self, author: String) -> &mut Self {
-      self.authors([author].to_vec())
-  }
+    pub fn author(&mut self, author: String) -> &mut Self {
+        self.authors([author].to_vec())
+    }
 
-  pub fn authors(&mut self, mut authors: Vec<String>) -> &mut Self {
-      self.authors.get_or_insert(vec![]).append(&mut authors);
-      self
-  }
+    pub fn authors(&mut self, mut authors: Vec<String>) -> &mut Self {
+        self.authors.get_or_insert(vec![]).append(&mut authors);
+        self
+    }
 
-  pub fn kind(&mut self, kind: u32) -> &mut Self {
-      self.kinds([kind].to_vec())
-  }
+    pub fn kind(&mut self, kind: u32) -> &mut Self {
+        self.kinds([kind].to_vec())
+    }
 
-  pub fn kinds(&mut self, mut kinds: Vec<u32>) -> &mut Self {
-      self.kinds.get_or_insert(vec![]).append(&mut kinds);
-      self
-  }
+    pub fn kinds(&mut self, mut kinds: Vec<u32>) -> &mut Self {
+        self.kinds.get_or_insert(vec![]).append(&mut kinds);
+        self
+    }
 
-  pub fn etag(&mut self, etag: String) -> &mut Self {
-      self.etags([etag].to_vec())
-  }
+    pub fn etag(&mut self, etag: String) -> &mut Self {
+        self.etags([etag].to_vec())
+    }
 
-  pub fn etags(&mut self, mut etags: Vec<String>) -> &mut Self {
-      self.e.get_or_insert(vec![]).append(&mut etags);
-      self
-  }
+    pub fn etags(&mut self, mut etags: Vec<String>) -> &mut Self {
+        self.e.get_or_insert(vec![]).append(&mut etags);
+        self
+    }
 
-  pub fn ptag(&mut self, ptag: String) -> &mut Self {
-      self.ptags([ptag].to_vec())
-  }
+    pub fn ptag(&mut self, ptag: String) -> &mut Self {
+        self.ptags([ptag].to_vec())
+    }
 
-  pub fn ptags(&mut self, mut ptags: Vec<String>) -> &mut Self {
-      self.p.get_or_insert(vec![]).append(&mut ptags);
-      self
-  }
+    pub fn ptags(&mut self, mut ptags: Vec<String>) -> &mut Self {
+        self.p.get_or_insert(vec![]).append(&mut ptags);
+        self
+    }
 
-  pub fn since(&mut self, since: u32) -> &mut Self {
-      self.since = Some(since);
-      self
-  }
+    pub fn since(&mut self, since: u32) -> &mut Self {
+        self.since = Some(since);
+        self
+    }
 
-  pub fn until(&mut self, until: u32) -> &mut Self {
-      self.until = Some(until);
-      self
-  }
+    pub fn until(&mut self, until: u32) -> &mut Self {
+        self.until = Some(until);
+        self
+    }
 
-  pub fn limit(&mut self, limit: u32) -> &mut Self {
-      self.limit = Some(limit);
-      self
-  }
+    pub fn limit(&mut self, limit: u32) -> &mut Self {
+        self.limit = Some(limit);
+        self
+    }
 
-  pub fn to_json(&mut self) -> String {
-    serde_json::to_string(self).unwrap()
-  }
+    pub fn to_json(&mut self) -> String {
+        serde_json::to_string(self).unwrap()
+    }
 }
 
 macro_rules! add_parameters_to_request {
     ($request:ident, $cli_matches:expr, $param_name:expr, $fn_name:ident, $param_type:ty) => {
-        for param in $cli_matches.get_many::<$param_type>($param_name).unwrap_or_default() {
+        for param in $cli_matches
+            .get_many::<$param_type>($param_name)
+            .unwrap_or_default()
+        {
             $request.$fn_name(param.to_owned());
         }
-    }
+    };
 }
 
 macro_rules! add_parameter_to_request {
-  ($request:ident, $matches:ident, $param_name:expr, $fn_name:ident, $param_type:ty) => {
-    match $matches.get_one::<$param_type>($param_name) {
-      None => {},
-      Some(param) => { $request.$fn_name(*param); }
-    }
-  }
+    ($request:ident, $matches:ident, $param_name:expr, $fn_name:ident, $param_type:ty) => {
+        match $matches.get_one::<$param_type>($param_name) {
+            None => {}
+            Some(param) => {
+                $request.$fn_name(*param);
+            }
+        }
+    };
 }
 
 pub fn request_from_cli(cli_matches: ArgMatches) -> Request {
-
     let mut request = Request::new();
 
     add_parameters_to_request!(request, cli_matches, "ids", id, String);
