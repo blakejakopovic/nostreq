@@ -86,7 +86,7 @@ pub fn cli() -> Command {
         )
         .arg(
             Arg::new("count")
-                .help("maximum number of events to be returned in the initial query")
+                .help("use COUNT method to get number of query results (NIP-45)")
                 .long("count")
                 .required(false)
                 .num_args(0)

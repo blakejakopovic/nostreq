@@ -49,10 +49,9 @@ fn main() {
         None => Uuid::new_v4().to_string(),
     };
 
-    let method = if cli().get_matches_from(args).get_flag("count") {
-        "COUNT"
-    } else {
-        "REQ"
+    let method = match cli().get_matches_from(args).get_flag("count") {
+        true => "COUNT",
+        false => "REQ",
     };
 
     println!(
